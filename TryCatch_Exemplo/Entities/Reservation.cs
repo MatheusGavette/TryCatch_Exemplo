@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using TryCatch_Exemplo.Entities.Exception;
 
 namespace TryCatch_Exemplo.Entities
 {
@@ -16,6 +15,10 @@ namespace TryCatch_Exemplo.Entities
         }
         public Reservation(int roomNumber, DateTime checkIn, DateTime checkOut)
         {
+            if (checkOut <= checkIn)
+            {
+                throw new DomainException("Error inreservation: Checl-out date must be after check-in date");
+            }
             RoomNumber = roomNumber;
             CheckIn = checkIn;
             CheckOut = checkOut;
@@ -27,24 +30,22 @@ namespace TryCatch_Exemplo.Entities
             return (int)duration.TotalDays;
         }
 
-        public string UpdateDates(DateTime checkIn, DateTime checkOut)
+        public void UpdateDates(DateTime checkIn, DateTime checkOut)
         {
             DateTime now = DateTime.Now;
 
             if (checkIn < now || checkOut < now)
             {
-                return "Error in reservation: Reservation dates for update must be future dates";
+                throw new DomainException("Error in reservation: Reservation dates for update must be future dates");
             }
 
             if (checkOut <= checkIn)
             {
-                return "Error inreservation: Checl-out date must be after check-in date";
+                throw new DomainException("Error inreservation: Check-out date must be after check-in date");
             }          
             
             CheckIn = checkIn;
-            CheckOut = checkOut;
-
-            return null;
+            CheckOut = checkOut;            
         }
 
         public override string ToString()
@@ -53,6 +54,7 @@ namespace TryCatch_Exemplo.Entities
                 + RoomNumber
                 + ", Check-in: "
                 + CheckIn.ToString("dd/MM/yyyy")
+                + ", Check-out: "
                 + CheckOut.ToString("dd/MM/yyyy")
                 + ", "
                 + Duration()
